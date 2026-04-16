@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Load Balancers</h2>
+
+<ul>
+{% for lb in lbs %}
+<li>{{ lb.name }} → {{ lb.servers }}</li>
+{% endfor %}
+</ul>
+
+<a href="/add_lb">Ajouter</a>
+{% endblock %}

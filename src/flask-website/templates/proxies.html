@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Reverse Proxy</h2>
+
+<ul>
+{% for p in proxies %}
+<li>{{ p.name }} → {{ p.target }}</li>
+{% endfor %}
+</ul>
+
+<a href="/add_proxy">Ajouter</a>
+{% endblock %}
