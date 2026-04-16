@@ -1,62 +1,58 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect
 import requests
 
 app = Flask(__name__)
 
-API_URL = "http://localhost:5000/config"
+API_URL = "http://127.0.0.1:5001"
+
 
 @app.route("/")
-def start(): 
-    return render_template('start.html')
+def index():
+    return render_template("index.html")
 
-@app.route("/<type_cfg>/list")
-def list_items(type_cfg):
-    try:
-        response = requests.get(f"{API_URL}/{type_cfg}")
-        items = response.json()
-    except Exception as e:
-        print(f"Erreur de connexion à l'API : {e}")
-        items = []
-    return render_template('list.html', items=items, type_cfg=type_cfg)
 
-@app.route("/<type_cfg>/view/<int:id>")
-def view_config(type_cfg, id):
-    try:
-        item = requests.get(f"{API_URL}/{type_cfg}/{id}").json()
-        
-        sample_map = {
-            "loadbalancer": "load-balancer",
-            "reverseproxy": "reverse-proxy",
-            "webserver": "webserver"
+@app.route("/servers")
+def servers():
+    res = requests.get(f"{API_URL}/servers")
+    return render_template("servers.html", servers=res.json())
+
+
+@app.route("/servers/<int:id>")
+def server_detail(id):
+    res = requests.get(f"{API_URL}/servers/{id}")
+    server = res.json()
+
+    config = f"""
+server {{
+    listen {server['port']};
+    server_name {server['name']};
+
+    location / {{
+        proxy_pass http://localhost:{server['port']};
+    }}
+}}
+"""
+    return render_template("server_detail.html", config=config)
+
+
+@app.route("/add_server", methods=["GET", "POST"])
+def add_server():
+    if request.method == "POST":
+        data = {
+            "name": request.form["name"],
+            "port": int(request.form["port"])
         }
-        sample_file = sample_map.get(type_cfg, "webserver")
-        
-        # Lecture du template Nginx correspondant
-        with open(f"nginx-templates/{sample_file}.sample", 'r') as f:
-            content = f.read()
-            
+        requests.post(f"{API_URL}/servers", json=data)
+        return redirect("/servers")
 
-        config_generated = content.replace("example.com", item.get('name', 'serveur_inconnu'))
-        
-        return render_template('config_detail.html', config=config_generated, item=item, type_cfg=type_cfg)
-    except Exception as e:
-        return f"Erreur lors de la génération de la config : {e}", 500
+    return render_template("add_server.html")
 
-@app.route("/<type_cfg>/create", methods=['GET', 'POST'])
-def create_item(type_cfg):
-    if request.method == 'POST':
-        new_data = {
-            "name": request.form.get('name'),
-            "ip_bind": request.form.get('ip', '127.0.0.1')
-        }
-        requests.post(f"{API_URL}/{type_cfg}", json=new_data)
-        return redirect(url_for('list_items', type_cfg=type_cfg))
-    return render_template('add_form.html', type_cfg=type_cfg)
 
-@app.route("/<type_cfg>/delete/<int:id>")
-def delete_item(type_cfg, id):
-    requests.delete(f"{API_URL}/{type_cfg}/{id}")
-    return redirect(url_for('list_items', type_cfg=type_cfg))
+@app.route("/delete_server/<int:id>")
+def delete_server(id):
+    requests.delete(f"{API_URL}/servers/{id}")
+    return redirect("/servers")
+
 
 if __name__ == "__main__":
-    app.run(port=5001, debug=True)
+    app.run(port=5000, debug=True)

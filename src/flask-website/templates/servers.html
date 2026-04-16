@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Liste des serveurs</h2>
+
+<ul>
+    {% for s in servers %}
+    <li>
+        {{ s.name }} (port {{ s.port }})
+        <a href="/servers/{{ s.id }}">Voir</a>
+        <a href="/delete_server/{{ s.id }}">Supprimer</a>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

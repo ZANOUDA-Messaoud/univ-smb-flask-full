@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Ajouter un serveur</h2>
+
+<form method="post">
+    Nom: <input type="text" name="name"><br>
+    Port: <input type="number" name="port"><br>
+    <button type="submit">Ajouter</button>
+</form>
+
+{% endblock %}
