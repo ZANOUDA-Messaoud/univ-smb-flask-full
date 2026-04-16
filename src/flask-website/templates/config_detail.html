@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block title %}Configuration Nginx{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Fichier de configuration pour : {{ item.name }}</h2>
+    <pre class="bg-dark text-white p-3"><code>{{ config }}</code></pre>
+    <a href="javascript:history.back()" class="btn btn-secondary">Retour</a>
+</div>
+{% endblock %}

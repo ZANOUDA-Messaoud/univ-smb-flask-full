@@ -1,0 +1,8 @@
+[
+    {
+        "id": 1,
+        "name": "RP Production",
+        "target_url": "http://backend-cluster",
+        "port": 80
+    }
+]

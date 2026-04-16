@@ -1,0 +1,8 @@
+[
+    {
+        "id": 1,
+        "name": "Static Site 1",
+        "root_path": "/var/www/html",
+        "index_file": "index.html"
+    }
+]

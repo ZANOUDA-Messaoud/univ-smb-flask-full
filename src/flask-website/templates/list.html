@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}Liste {{ type_cfg }}{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Gestion des {{ type_cfg }}</h2>
+    <table class="table">
+        <thead><tr><th>ID</th><th>Nom</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>
+                    <a href="{{ url_for('view_config', type_cfg=type_cfg, id=item.id) }}" class="btn btn-info">Voir Config</a>
+                    <a href="{{ url_for('delete_item', type_cfg=type_cfg, id=item.id) }}" class="btn btn-danger">Supprimer</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
